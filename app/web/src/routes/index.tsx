@@ -6,14 +6,14 @@ export const Route = createFileRoute('/')({
 })
 
 const mockPotholes = [
-  { id: 1, street: 'Carrer de Mallorca',  severity: 'high', bike: 'Sensor 01', time: '2 min ago',  reviewed: false, coords: { x: '22%', y: '28%' } },
-  { id: 2, street: 'Carrer de Provença',  severity: 'high', bike: 'Sensor 01', time: '8 min ago',  reviewed: false, coords: { x: '38%', y: '52%' } },
-  { id: 3, street: 'Av. Diagonal',        severity: 'med',  bike: 'Sensor 02', time: '15 min ago', reviewed: true,  coords: { x: '65%', y: '38%' } },
-  { id: 4, street: 'Via Laietana',        severity: 'med',  bike: 'Sensor 02', time: '22 min ago', reviewed: false, coords: { x: '55%', y: '68%' } },
-  { id: 5, street: 'Passeig de Gràcia',   severity: 'low',  bike: 'Sensor 03', time: '41 min ago', reviewed: true,  coords: { x: '30%', y: '78%' } },
-  { id: 6, street: 'Carrer de Balmes',    severity: 'low',  bike: 'Sensor 03', time: '1 hr ago',   reviewed: false, coords: { x: '72%', y: '55%' } },
-  { id: 7, street: 'Rambla del Poblenou', severity: 'high', bike: 'Sensor 01', time: '1 hr ago',   reviewed: false, coords: { x: '48%', y: '20%' } },
-  { id: 8, street: 'Carrer de Muntaner',  severity: 'med',  bike: 'Sensor 02', time: '2 hrs ago',  reviewed: true,  coords: { x: '18%', y: '62%' } },
+  { id: 1, street: 'Carrer de Mallorca',  severity: 'high', time: '2 min ago',  reviewed: false, coords: { x: '22%', y: '28%' } },
+  { id: 2, street: 'Carrer de Provença',  severity: 'high',  time: '8 min ago',  reviewed: false, coords: { x: '38%', y: '52%' } },
+  { id: 3, street: 'Av. Diagonal',        severity: 'med',  time: '15 min ago', reviewed: true,  coords: { x: '65%', y: '38%' } },
+  { id: 4, street: 'Via Laietana',        severity: 'med',  time: '22 min ago', reviewed: false, coords: { x: '55%', y: '68%' } },
+  { id: 5, street: 'Passeig de Gràcia',   severity: 'low',  time: '41 min ago', reviewed: true,  coords: { x: '30%', y: '78%' } },
+  { id: 6, street: 'Carrer de Balmes',    severity: 'low',  time: '1 hr ago',   reviewed: false, coords: { x: '72%', y: '55%' } },
+  { id: 7, street: 'Rambla del Poblenou', severity: 'high',  time: '1 hr ago',   reviewed: false, coords: { x: '48%', y: '20%' } },
+  { id: 8, street: 'Carrer de Muntaner',  severity: 'med',  time: '2 hrs ago',  reviewed: true,  coords: { x: '18%', y: '62%' } },
 ]
 
 const sevConfig = {
@@ -261,21 +261,6 @@ function Home() {
                 Barcelona, ES
               </p>
             </div>
-          </div>
-
-          <div className="px-4 py-2.5 border-t border-gray-800 flex gap-4 flex-wrap">
-            {[
-              { name: 'Sensor 01', zone: 'Eixample',    color: '#639922' },
-              { name: 'Sensor 02', zone: 'Gràcia',      color: '#EF9F27' },
-              { name: 'Sensor 03', zone: 'Barceloneta', color: '#378ADD' },
-            ].map(b => (
-              <div key={b.name} className="flex items-center gap-2">
-                <div className="w-1.5 h-1.5 rounded-full" style={{ background: b.color }} />
-                <span className="text-xs text-gray-400">
-                  <span className="text-gray-300 font-medium">{b.name}</span> — {b.zone}
-                </span>
-              </div>
-            ))}
           </div>
         </div>
 

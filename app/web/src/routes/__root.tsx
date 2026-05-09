@@ -69,15 +69,14 @@ function RootDocument({ children }: { children: React.ReactNode }) {
             <i className={`ti ${sidebarOpen ? 'ti-x' : 'ti-menu-2'} text-lg text-gray-300`} />
           </button>
 
-          {/* Logo */}
-          <div className="flex items-center gap-2">
+          <Link to="/" className="flex items-center gap-2">
             <div className="w-7 h-7 rounded-lg bg-green-600 flex items-center justify-center shrink-0">
               <i className="ti ti-bike text-white text-sm" />
             </div>
             <span className="text-sm font-medium tracking-tight text-gray-100">
               Pothole<span className="text-green-500">Tracker</span>
             </span>
-          </div>
+          </Link>
 
           {/* Live indicator */}
           <div className="hidden sm:flex items-center gap-1.5 ml-2">

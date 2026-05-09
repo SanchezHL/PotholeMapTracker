@@ -70,17 +70,17 @@ function AlertDetail() {
   }
 
   return (
-    <div className="flex flex-col gap-4 h-full min-h-0 max-w-5xl mx-auto w-full">
+    <div className="flex flex-col gap-3 h-full min-h-0 max-w-7xl mx-auto w-full">
 
       {/* ── TOP NAV ── */}
-      <div className="flex items-center gap-3">
-        <Link
-          to="/alerts"
+      <div className="flex items-center gap-2">
+        <button
+          onClick={() => window.history.back()}
           className="flex items-center gap-2 text-xs text-gray-400 hover:text-gray-200 bg-gray-900 border border-gray-800 hover:border-gray-700 px-3 py-2 rounded-xl transition-all shrink-0"
         >
           <i className="ti ti-arrow-left text-sm" />
-          <span className="hidden sm:inline">Back to list</span>
-        </Link>
+          <span className="hidden sm:inline">Back</span>
+        </button>
 
         <div className="flex-1 min-w-0 hidden sm:block">
           <p className="text-xs text-gray-500 truncate">
@@ -113,10 +113,10 @@ function AlertDetail() {
       <div className="flex-1 bg-gray-900 border border-gray-800 rounded-xl overflow-hidden flex flex-col min-h-0">
 
         {/* Card header */}
-        <div
-          className="px-5 py-4 border-b border-gray-800 flex flex-wrap items-center gap-3 shrink-0"
-          style={{ borderLeft: `3px solid ${sevConfig[alert.severity as Severity].color}` }}
-        >
+          <div
+            className="px-4 py-3 border-b border-gray-800 flex flex-wrap items-center gap-3 shrink-0"
+            style={{ borderLeft: `3px solid ${sevConfig[alert.severity as Severity].color}` }}
+          >
           <div className="flex-1 min-w-0">
             <h2 className="text-base font-medium text-gray-100 truncate">{alert.street}</h2>
             <p className="text-xs text-gray-500 mt-0.5">{alert.zone}, Barcelona</p>
@@ -138,7 +138,7 @@ function AlertDetail() {
         </div>
 
         {/* Scrollable body */}
-        <div className="flex-1 overflow-y-auto p-5 flex flex-col gap-5 min-h-0">
+        <div className="flex-1 overflow-y-auto p-3 flex flex-col gap-3 min-h-0 scrollbar-thin [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-gray-950 [&::-webkit-scrollbar-thumb]:bg-gray-700 [&::-webkit-scrollbar-thumb]:rounded-full">
 
           {/* ── 3 INFO CARDS ── */}
           <div className="grid grid-cols-3 gap-3 shrink-0">
@@ -158,7 +158,7 @@ function AlertDetail() {
           </div>
 
           {/* ── TWO COLUMN GRID — IMAGE + REVIEW ── */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 flex-1 min-h-0">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 flex-1 min-h-0">
 
             {/* ── LEFT — IMAGE ── */}
             <div className="flex flex-col gap-3">
@@ -220,7 +220,7 @@ function AlertDetail() {
                 <i className="ti ti-clipboard-check text-xs" /> Tech review
               </p>
 
-              <div className="bg-gray-950 border border-gray-800 rounded-xl p-5 flex flex-col gap-5 flex-1">
+              <div className="bg-gray-950 border border-gray-800 rounded-xl p-4 flex flex-col gap-3 flex-1">
 
                 {/* Severity */}
                 <div>

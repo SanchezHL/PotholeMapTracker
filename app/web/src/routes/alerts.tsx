@@ -101,7 +101,7 @@ function AlertsPage() {
       </div>
 
       {/* ── ALERT LIST ── */}
-      <div className="flex-1 overflow-y-auto flex flex-col gap-2 min-h-0 pb-2">
+      <div className="flex-1 overflow-y-auto flex flex-col gap-2 min-h-0 pb-2 ">
         {filtered.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-40 text-gray-600">
             <i className="ti ti-mood-empty text-3xl mb-2" />
