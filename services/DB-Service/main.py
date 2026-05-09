@@ -11,6 +11,12 @@ def read_root():
         "docs_url": "http://127.0.0"
     }
 
+@app.get("/health")
+def read_root():
+    return {
+            "status": "true"
+        }
+
 @app.post("/road-incidents")
 def save_road_incident(data: dict):
     db.road_incidents.insert_one({
