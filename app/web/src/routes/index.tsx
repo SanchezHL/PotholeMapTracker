@@ -299,7 +299,7 @@ function Home() {
                         </span>
                       </div>
                       <div className="flex items-center justify-between mt-1">
-                        <p className="text-xs text-gray-500">{p.bike} · {p.time}</p>
+                        <p className="text-xs text-gray-500">{p.time}</p>
                         {!p.reviewed ? (
                           <span className="text-xs text-amber-400 flex items-center gap-1">
                             <i className="ti ti-eye text-xs" />
