@@ -10,7 +10,32 @@
   }
   
 }
+@import 'mapbox-gl/dist/mapbox-gl.css';
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
+.leaflet-container {
+  height: 100% !important;
+  width: 100% !important;
+  background: #030712 !important;
+}
+
+  .leaflet-container { background: #030712 !important; }
+  .custom-tooltip { background: none !important; border: none !important; box-shadow: none !important; }
+  .custom-tooltip .leaflet-tooltip-tip { display: none !important; }
+  .leaflet-control-zoom { border: 0.5px solid #1f2937 !important; }
+  .leaflet-control-zoom a { background: #111827 !important; color: #9ca3af !important; border-bottom: 0.5px solid #1f2937 !important; }
+  .leaflet-control-zoom a:hover { background: #1f2937 !important; color: #f9fafb !important; }
+  .leaflet-control-attribution { background: rgba(17,24,39,0.8) !important; color: #4b5563 !important; font-size: 10px !important; }
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #374151 #030712;
+}
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
 @layer base {
   html {
     color-scheme: light dark;

@@ -35,7 +35,7 @@ const maxTotal = Math.max(...zoneData.map(z => z.total))
 
 function CityReport() {
   const [activeZone, setActiveZone] = React.useState<string | null>(null)
-  const [exporting, setExporting]   = React.useState(false)
+  const [exporting,  setExporting]  = React.useState(false)
   const reportRef = React.useRef<HTMLDivElement>(null)
 
   const totalPotholes  = zoneData.reduce((s, z) => s + z.total, 0)
@@ -59,27 +59,27 @@ function CityReport() {
   async function handleExportPDF() {
     if (!reportRef.current) return
     setExporting(true)
-
     try {
       const html2canvas = (await import('html2canvas')).default
       const jsPDF       = (await import('jspdf')).default
+      const isDark      = document.documentElement.classList.contains('dark')
 
       const canvas = await html2canvas(reportRef.current, {
-        backgroundColor: '#030712',
+        backgroundColor: isDark ? '#030712' : '#f9fafb',
         scale: 2,
         useCORS: true,
         logging: false,
       })
 
-      const imgData     = canvas.toDataURL('image/png')
-      const pdf         = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' })
-      const pageWidth   = pdf.internal.pageSize.getWidth()
-      const pageHeight  = pdf.internal.pageSize.getHeight()
-      const imgWidth    = pageWidth
-      const imgHeight   = (canvas.height * imgWidth) / canvas.width
+      const imgData    = canvas.toDataURL('image/png')
+      const pdf        = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' })
+      const pageWidth  = pdf.internal.pageSize.getWidth()
+      const pageHeight = pdf.internal.pageSize.getHeight()
+      const imgWidth   = pageWidth
+      const imgHeight  = (canvas.height * imgWidth) / canvas.width
 
-      let heightLeft  = imgHeight
-      let position    = 0
+      let heightLeft = imgHeight
+      let position   = 0
 
       pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight)
       heightLeft -= pageHeight
@@ -105,15 +105,15 @@ function CityReport() {
       {/* ── PAGE HEADER ── */}
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
-          <h1 className="text-base font-medium text-gray-100">City report</h1>
-          <p className="text-xs text-gray-500 mt-0.5">
+          <h1 className="text-base font-medium text-gray-900 dark:text-gray-100">City report</h1>
+          <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">
             Barcelona · May 2026 · Auto-generated from sensor data
           </p>
         </div>
         <button
           onClick={handleExportPDF}
           disabled={exporting}
-          className="flex items-center gap-2 text-xs bg-gray-900 border border-gray-800 hover:border-gray-700 text-gray-400 hover:text-gray-200 px-3 py-2 rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+          className="flex items-center gap-2 text-xs bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 hover:border-gray-300 dark:hover:border-gray-700 text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 px-3 py-2 rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {exporting ? (
             <>
@@ -129,25 +129,24 @@ function CityReport() {
         </button>
       </div>
 
-      {/* everything below here gets captured for PDF */}
       <div ref={reportRef} className="flex flex-col gap-3">
 
         {/* ── STAT CARDS ── */}
         <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
-          <div className="bg-gray-900 border border-gray-800 rounded-xl p-4">
-            <p className="text-xs text-gray-500 mb-1">Total potholes</p>
-            <p className="text-2xl font-medium text-gray-100">{totalPotholes}</p>
-            <p className="text-xs mt-1 text-red-400">+18 this week</p>
+          <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-4">
+            <p className="text-xs text-gray-400 dark:text-gray-500 mb-1">Total potholes</p>
+            <p className="text-2xl font-medium text-gray-900 dark:text-gray-100">{totalPotholes}</p>
+            <p className="text-xs mt-1 text-red-500 dark:text-red-400">+18 this week</p>
           </div>
-          <div className="bg-gray-900 border border-gray-800 rounded-xl p-4">
-            <p className="text-xs text-gray-500 mb-1">Repaired</p>
-            <p className="text-2xl font-medium text-gray-100">{totalFixed}</p>
-            <p className="text-xs mt-1 text-green-500">{resolutionRate}% resolution rate</p>
+          <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-4">
+            <p className="text-xs text-gray-400 dark:text-gray-500 mb-1">Repaired</p>
+            <p className="text-2xl font-medium text-gray-900 dark:text-gray-100">{totalFixed}</p>
+            <p className="text-xs mt-1 text-green-600 dark:text-green-500">{resolutionRate}% resolution rate</p>
           </div>
-          <div className="bg-gray-900 border border-gray-800 rounded-xl p-4">
-            <p className="text-xs text-gray-500 mb-1">Avg response time</p>
-            <p className="text-2xl font-medium text-gray-100">4.2h</p>
-            <p className="text-xs mt-1 text-amber-400">+0.8h vs last week</p>
+          <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-4">
+            <p className="text-xs text-gray-400 dark:text-gray-500 mb-1">Avg response time</p>
+            <p className="text-2xl font-medium text-gray-900 dark:text-gray-100">4.2h</p>
+            <p className="text-xs mt-1 text-amber-500 dark:text-amber-400">+0.8h vs last week</p>
           </div>
         </div>
 
@@ -155,10 +154,10 @@ function CityReport() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
 
           {/* Bar chart by zone */}
-          <div className="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden">
-            <div className="px-4 py-3 border-b border-gray-800 flex items-center gap-2">
-              <i className="ti ti-map-pin text-gray-500 text-sm" />
-              <span className="text-sm font-medium text-gray-200">Potholes by zone</span>
+          <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl overflow-hidden">
+            <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-800 flex items-center gap-2">
+              <i className="ti ti-map-pin text-gray-400 dark:text-gray-500 text-sm" />
+              <span className="text-sm font-medium text-gray-800 dark:text-gray-200">Potholes by zone</span>
             </div>
             <div className="p-4 flex flex-col gap-3">
               {zoneData.map(z => {
@@ -170,16 +169,16 @@ function CityReport() {
                     className="flex items-center gap-3 cursor-pointer group"
                     onClick={() => setActiveZone(activeZone === z.name ? null : z.name)}
                   >
-                    <span className="text-xs text-gray-400 w-24 shrink-0 group-hover:text-gray-200 transition-colors">
+                    <span className="text-xs text-gray-500 dark:text-gray-400 w-24 shrink-0 group-hover:text-gray-800 dark:group-hover:text-gray-200 transition-colors">
                       {z.name}
                     </span>
-                    <div className="flex-1 h-1.5 bg-gray-800 rounded-full overflow-hidden">
+                    <div className="flex-1 h-1.5 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
                       <div
                         className="h-full rounded-full transition-all duration-500"
                         style={{ width: `${pct}%`, background: color }}
                       />
                     </div>
-                    <span className="text-xs text-gray-500 w-6 text-right shrink-0">{z.total}</span>
+                    <span className="text-xs text-gray-400 dark:text-gray-500 w-6 text-right shrink-0">{z.total}</span>
                   </div>
                 )
               })}
@@ -187,26 +186,26 @@ function CityReport() {
               {activeZone && (() => {
                 const z = zoneData.find(d => d.name === activeZone)!
                 return (
-                  <div className="mt-1 bg-gray-950 border border-gray-800 rounded-xl p-3 flex gap-4 flex-wrap">
+                  <div className="mt-1 bg-gray-50 dark:bg-gray-950 border border-gray-200 dark:border-gray-800 rounded-xl p-3 flex gap-4 flex-wrap">
                     <div>
-                      <p className="text-xs text-gray-500">Zone</p>
-                      <p className="text-sm font-medium text-gray-200">{z.name}</p>
+                      <p className="text-xs text-gray-400 dark:text-gray-500">Zone</p>
+                      <p className="text-sm font-medium text-gray-800 dark:text-gray-200">{z.name}</p>
                     </div>
                     <div>
-                      <p className="text-xs text-gray-500">Total</p>
-                      <p className="text-sm font-medium text-gray-200">{z.total}</p>
+                      <p className="text-xs text-gray-400 dark:text-gray-500">Total</p>
+                      <p className="text-sm font-medium text-gray-800 dark:text-gray-200">{z.total}</p>
                     </div>
                     <div>
-                      <p className="text-xs text-gray-500">Fixed</p>
-                      <p className="text-sm font-medium text-green-400">{z.fixed}</p>
+                      <p className="text-xs text-gray-400 dark:text-gray-500">Fixed</p>
+                      <p className="text-sm font-medium text-green-600 dark:text-green-400">{z.fixed}</p>
                     </div>
                     <div>
-                      <p className="text-xs text-gray-500">Remaining</p>
-                      <p className="text-sm font-medium text-amber-400">{z.total - z.fixed}</p>
+                      <p className="text-xs text-gray-400 dark:text-gray-500">Remaining</p>
+                      <p className="text-sm font-medium text-amber-500 dark:text-amber-400">{z.total - z.fixed}</p>
                     </div>
                     <div>
-                      <p className="text-xs text-gray-500">Resolution</p>
-                      <p className="text-sm font-medium text-gray-200">
+                      <p className="text-xs text-gray-400 dark:text-gray-500">Resolution</p>
+                      <p className="text-sm font-medium text-gray-800 dark:text-gray-200">
                         {Math.round((z.fixed / z.total) * 100)}%
                       </p>
                     </div>
@@ -217,29 +216,29 @@ function CityReport() {
           </div>
 
           {/* Zone status grid */}
-          <div className="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden">
-            <div className="px-4 py-3 border-b border-gray-800 flex items-center gap-2">
-              <i className="ti ti-building text-gray-500 text-sm" />
-              <span className="text-sm font-medium text-gray-200">Zone status overview</span>
+          <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl overflow-hidden">
+            <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-800 flex items-center gap-2">
+              <i className="ti ti-building text-gray-400 dark:text-gray-500 text-sm" />
+              <span className="text-sm font-medium text-gray-800 dark:text-gray-200">Zone status overview</span>
             </div>
             <div className="p-4 grid grid-cols-2 gap-3">
               {zoneData.slice(0, 4).map(z => {
                 const resPct = Math.round((z.fixed / z.total) * 100)
                 return (
-                  <div key={z.name} className="bg-gray-950 border border-gray-800 rounded-xl p-3">
+                  <div key={z.name} className="bg-gray-50 dark:bg-gray-950 border border-gray-200 dark:border-gray-800 rounded-xl p-3">
                     <div className="flex items-center justify-between mb-2">
-                      <p className="text-xs font-medium text-gray-200">{z.name}</p>
+                      <p className="text-xs font-medium text-gray-800 dark:text-gray-200">{z.name}</p>
                       <span className={`text-xs px-1.5 py-0.5 rounded-full ${
                         resPct >= 50
-                          ? 'bg-green-950 text-green-400 border border-green-900'
-                          : 'bg-amber-950 text-amber-400 border border-amber-900'
+                          ? 'bg-green-50 dark:bg-green-950 text-green-600 dark:text-green-400 border border-green-200 dark:border-green-900'
+                          : 'bg-amber-50 dark:bg-amber-950 text-amber-600 dark:text-amber-400 border border-amber-200 dark:border-amber-900'
                       }`}>
                         {resPct}% fixed
                       </span>
                     </div>
-                    <div className="flex gap-2 text-xs text-gray-500 mb-2">
+                    <div className="flex gap-2 text-xs text-gray-400 dark:text-gray-500 mb-2">
                       <span>{z.total} total</span>
-                      <span className="text-green-600">{z.fixed} repaired</span>
+                      <span className="text-green-600 dark:text-green-600">{z.fixed} repaired</span>
                     </div>
                     <div className="flex h-1 rounded-full overflow-hidden gap-px">
                       <div style={{ flex: z.critical, background: '#E24B4A', borderRadius: 2 }} />
@@ -262,18 +261,18 @@ function CityReport() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
 
           {/* Activity timeline */}
-          <div className="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden">
-            <div className="px-4 py-3 border-b border-gray-800 flex items-center gap-2">
-              <i className="ti ti-clock text-gray-500 text-sm" />
-              <span className="text-sm font-medium text-gray-200">Recent activity</span>
+          <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl overflow-hidden">
+            <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-800 flex items-center gap-2">
+              <i className="ti ti-clock text-gray-400 dark:text-gray-500 text-sm" />
+              <span className="text-sm font-medium text-gray-800 dark:text-gray-200">Recent activity</span>
             </div>
             <div className="p-4 flex flex-col gap-3">
               {activityLog.map((item, i) => (
                 <div key={i} className="flex gap-3 items-start">
                   <div className="w-2 h-2 rounded-full mt-1 shrink-0" style={{ background: item.color }} />
                   <div className="flex-1 min-w-0">
-                    <p className="text-xs text-gray-300 leading-relaxed">{item.text}</p>
-                    <p className="text-xs text-gray-600 mt-0.5">{item.time}</p>
+                    <p className="text-xs text-gray-700 dark:text-gray-300 leading-relaxed">{item.text}</p>
+                    <p className="text-xs text-gray-400 dark:text-gray-600 mt-0.5">{item.time}</p>
                   </div>
                 </div>
               ))}
@@ -281,31 +280,33 @@ function CityReport() {
           </div>
 
           {/* Reports sent */}
-          <div className="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden">
-            <div className="px-4 py-3 border-b border-gray-800 flex items-center gap-2">
-              <i className="ti ti-send text-gray-500 text-sm" />
-              <span className="text-sm font-medium text-gray-200">Reports sent</span>
+          <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl overflow-hidden">
+            <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-800 flex items-center gap-2">
+              <i className="ti ti-send text-gray-400 dark:text-gray-500 text-sm" />
+              <span className="text-sm font-medium text-gray-800 dark:text-gray-200">Reports sent</span>
             </div>
             <div className="p-4 flex flex-col">
               {reportsSent.map((r, i) => (
-                <div key={i} className="flex items-center justify-between py-3 border-b border-gray-800 last:border-0">
+                <div key={i} className="flex items-center justify-between py-3 border-b border-gray-100 dark:border-gray-800 last:border-0">
                   <div className="flex items-center gap-2">
-                    <i className={`ti ${r.status === 'sent' ? 'ti-circle-check' : 'ti-clock'} text-sm ${r.status === 'sent' ? 'text-green-600' : 'text-amber-500'}`} />
-                    <span className="text-xs text-gray-300">{r.label}</span>
+                    <i className={`ti ${r.status === 'sent' ? 'ti-circle-check' : 'ti-clock'} text-sm ${
+                      r.status === 'sent' ? 'text-green-600' : 'text-amber-500'
+                    }`} />
+                    <span className="text-xs text-gray-700 dark:text-gray-300">{r.label}</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="text-sm font-medium text-gray-100">{r.value}</span>
+                    <span className="text-sm font-medium text-gray-900 dark:text-gray-100">{r.value}</span>
                     <span className={`text-xs px-2 py-0.5 rounded-full border ${
                       r.status === 'sent'
-                        ? 'bg-green-950 text-green-400 border-green-900'
-                        : 'bg-amber-950 text-amber-400 border-amber-900'
+                        ? 'bg-green-50 dark:bg-green-950 text-green-600 dark:text-green-400 border-green-200 dark:border-green-900'
+                        : 'bg-amber-50 dark:bg-amber-950 text-amber-600 dark:text-amber-400 border-amber-200 dark:border-amber-900'
                     }`}>
                       {r.status}
                     </span>
                   </div>
                 </div>
               ))}
-              <button className="mt-4 w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-green-950 border border-green-900 text-green-400 text-xs font-medium hover:bg-green-900 transition-colors">
+              <button className="mt-4 w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-green-600 dark:bg-green-950 border border-green-700 dark:border-green-900 text-white dark:text-green-400 text-xs font-medium hover:bg-green-700 dark:hover:bg-green-900 transition-colors">
                 <i className="ti ti-send text-sm" />
                 Send new report to city
               </button>

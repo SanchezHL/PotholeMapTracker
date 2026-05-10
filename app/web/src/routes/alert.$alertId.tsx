@@ -59,10 +59,10 @@ function AlertDetail() {
 
   if (!alert) {
     return (
-      <div className="flex flex-col items-center justify-center h-full gap-3 text-gray-500">
+      <div className="flex flex-col items-center justify-center h-full gap-3 text-gray-400 dark:text-gray-500">
         <i className="ti ti-alert-circle text-4xl" />
         <p className="text-sm">Alert not found</p>
-        <Link to="/alerts" className="text-xs text-green-500 hover:text-green-400 mt-2">
+        <Link to="/alerts" className="text-xs text-green-600 dark:text-green-500 hover:text-green-500 dark:hover:text-green-400 mt-2">
           ← Back to alerts
         </Link>
       </div>
@@ -76,14 +76,14 @@ function AlertDetail() {
       <div className="flex items-center gap-2">
         <button
           onClick={() => window.history.back()}
-          className="flex items-center gap-2 text-xs text-gray-400 hover:text-gray-200 bg-gray-900 border border-gray-800 hover:border-gray-700 px-3 py-2 rounded-xl transition-all shrink-0"
+          className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 hover:border-gray-300 dark:hover:border-gray-700 px-3 py-2 rounded-xl transition-all shrink-0"
         >
           <i className="ti ti-arrow-left text-sm" />
           <span className="hidden sm:inline">Back</span>
         </button>
 
         <div className="flex-1 min-w-0 hidden sm:block">
-          <p className="text-xs text-gray-500 truncate">
+          <p className="text-xs text-gray-400 dark:text-gray-500 truncate">
             Alert #{alert.id} · {alert.street} · {alert.zone}
           </p>
         </div>
@@ -92,17 +92,17 @@ function AlertDetail() {
           <button
             onClick={() => prevAlert && goTo(prevAlert.id)}
             disabled={!prevAlert}
-            className="p-2 rounded-xl bg-gray-900 border border-gray-800 text-gray-400 hover:text-gray-200 hover:border-gray-700 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+            className="p-2 rounded-xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 hover:border-gray-300 dark:hover:border-gray-700 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
           >
             <i className="ti ti-chevron-left text-sm" />
           </button>
-          <span className="text-xs text-gray-600 shrink-0 tabular-nums">
+          <span className="text-xs text-gray-400 dark:text-gray-600 shrink-0 tabular-nums">
             {alertIndex + 1} / {mockAlerts.length}
           </span>
           <button
             onClick={() => nextAlert && goTo(nextAlert.id)}
             disabled={!nextAlert}
-            className="p-2 rounded-xl bg-gray-900 border border-gray-800 text-gray-400 hover:text-gray-200 hover:border-gray-700 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+            className="p-2 rounded-xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 hover:border-gray-300 dark:hover:border-gray-700 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
           >
             <i className="ti ti-chevron-right text-sm" />
           </button>
@@ -110,27 +110,27 @@ function AlertDetail() {
       </div>
 
       {/* ── MAIN CARD ── */}
-      <div className="flex-1 bg-gray-900 border border-gray-800 rounded-xl overflow-hidden flex flex-col min-h-0">
+      <div className="flex-1 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl overflow-hidden flex flex-col min-h-0">
 
         {/* Card header */}
-          <div
-            className="px-4 py-3 border-b border-gray-800 flex flex-wrap items-center gap-3 shrink-0"
-            style={{ borderLeft: `3px solid ${sevConfig[alert.severity as Severity].color}` }}
-          >
+        <div
+          className="px-4 py-3 border-b border-gray-200 dark:border-gray-800 flex flex-wrap items-center gap-3 shrink-0"
+          style={{ borderLeft: `3px solid ${sevConfig[alert.severity as Severity].color}` }}
+        >
           <div className="flex-1 min-w-0">
-            <h2 className="text-base font-medium text-gray-100 truncate">{alert.street}</h2>
-            <p className="text-xs text-gray-500 mt-0.5">{alert.zone}, Barcelona</p>
+            <h2 className="text-base font-medium text-gray-900 dark:text-gray-100 truncate">{alert.street}</h2>
+            <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">{alert.zone}, Barcelona</p>
           </div>
           <div className="flex items-center gap-2 flex-wrap shrink-0">
             <span className={`text-xs px-2.5 py-1 rounded-full ${sevConfig[severity].badge}`}>
               {sevConfig[severity].label}
             </span>
             {!reviewed ? (
-              <span className="text-xs px-2.5 py-1 rounded-full bg-amber-950 text-amber-400 border border-amber-900">
+              <span className="text-xs px-2.5 py-1 rounded-full bg-amber-50 dark:bg-amber-950 text-amber-600 dark:text-amber-400 border border-amber-200 dark:border-amber-900">
                 Pending review
               </span>
             ) : (
-              <span className="text-xs px-2.5 py-1 rounded-full bg-green-950 text-green-400 border border-green-900 flex items-center gap-1">
+              <span className="text-xs px-2.5 py-1 rounded-full bg-green-50 dark:bg-green-950 text-green-600 dark:text-green-400 border border-green-200 dark:border-green-900 flex items-center gap-1">
                 <i className="ti ti-check text-xs" /> Reviewed
               </span>
             )}
@@ -138,7 +138,7 @@ function AlertDetail() {
         </div>
 
         {/* Scrollable body */}
-        <div className="flex-1 overflow-y-auto p-3 flex flex-col gap-3 min-h-0 scrollbar-thin [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-gray-950 [&::-webkit-scrollbar-thumb]:bg-gray-700 [&::-webkit-scrollbar-thumb]:rounded-full">
+        <div className="flex-1 overflow-y-auto p-3 flex flex-col gap-3 min-h-0">
 
           {/* ── 3 INFO CARDS ── */}
           <div className="grid grid-cols-3 gap-3 shrink-0">
@@ -147,12 +147,12 @@ function AlertDetail() {
               { icon: 'ti-clock',        label: 'Detected', value: alert.time                },
               { icon: 'ti-alert-circle', label: 'Potholes', value: `${alert.potholes} found` },
             ].map((item, i) => (
-              <div key={i} className="bg-gray-950 border border-gray-800 rounded-xl p-3">
+              <div key={i} className="bg-gray-50 dark:bg-gray-950 border border-gray-200 dark:border-gray-800 rounded-xl p-3">
                 <div className="flex items-center gap-1.5 mb-2">
-                  <i className={`ti ${item.icon} text-xs text-gray-500`} />
-                  <p className="text-xs text-gray-500">{item.label}</p>
+                  <i className={`ti ${item.icon} text-xs text-gray-400 dark:text-gray-500`} />
+                  <p className="text-xs text-gray-400 dark:text-gray-500">{item.label}</p>
                 </div>
-                <p className="text-sm font-medium text-gray-200">{item.value}</p>
+                <p className="text-sm font-medium text-gray-800 dark:text-gray-200">{item.value}</p>
               </div>
             ))}
           </div>
@@ -162,11 +162,11 @@ function AlertDetail() {
 
             {/* ── LEFT — IMAGE ── */}
             <div className="flex flex-col gap-3">
-              <p className="text-xs text-gray-500 uppercase tracking-wider flex items-center gap-2">
+              <p className="text-xs text-gray-400 dark:text-gray-500 uppercase tracking-wider flex items-center gap-2">
                 <i className="ti ti-camera text-xs" /> Detection image
               </p>
 
-              <div className="relative bg-gray-950 border border-gray-800 rounded-xl overflow-hidden flex-1 min-h-[260px] flex items-center justify-center">
+              <div className="relative bg-gray-100 dark:bg-gray-950 border border-gray-200 dark:border-gray-800 rounded-xl overflow-hidden flex-1 min-h-[260px] flex items-center justify-center">
                 {!imgError ? (
                   <img
                     src={fakeImage}
@@ -175,20 +175,20 @@ function AlertDetail() {
                     onError={() => setImgError(true)}
                   />
                 ) : (
-                  <div className="flex flex-col items-center gap-3 text-gray-700 z-10">
+                  <div className="flex flex-col items-center gap-3 text-gray-400 dark:text-gray-700 z-10">
                     <i className="ti ti-camera-off text-4xl" />
                     <p className="text-sm">Image pending from Arduino</p>
-                    <p className="text-xs text-gray-600">Will appear once the bike uploads it</p>
+                    <p className="text-xs text-gray-400 dark:text-gray-600">Will appear once the bike uploads it</p>
                   </div>
                 )}
 
                 {!imgError && (
-                  <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-gray-950/90 to-transparent pointer-events-none z-10" />
+                  <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black/60 to-transparent pointer-events-none z-10" />
                 )}
 
                 {/* Top badges */}
                 <div className="absolute top-3 left-3 flex gap-2 flex-wrap z-20">
-                  <span className="text-xs bg-gray-900/90 border border-gray-800 text-gray-300 px-2.5 py-1 rounded-lg flex items-center gap-1.5">
+                  <span className="text-xs bg-black/60 border border-white/10 text-gray-200 px-2.5 py-1 rounded-lg flex items-center gap-1.5 backdrop-blur-sm">
                     <i className="ti ti-clock text-xs" /> {alert.time}
                   </span>
                   <span className="text-xs bg-amber-950/90 border border-amber-900 text-amber-400 px-2.5 py-1 rounded-lg flex items-center gap-1.5">
@@ -199,10 +199,10 @@ function AlertDetail() {
                 {/* Bottom badges */}
                 {!imgError && (
                   <div className="absolute bottom-3 left-3 right-3 flex flex-wrap gap-2 z-20">
-                    <span className="text-xs bg-gray-900/90 border border-gray-800 text-gray-300 px-2.5 py-1 rounded-lg flex items-center gap-1.5">
+                    <span className="text-xs bg-black/60 border border-white/10 text-gray-200 px-2.5 py-1 rounded-lg flex items-center gap-1.5 backdrop-blur-sm">
                       <i className="ti ti-map-pin text-xs" /> {alert.zone}
                     </span>
-                    <span className="text-xs bg-gray-900/90 border border-gray-800 text-gray-300 px-2.5 py-1 rounded-lg flex items-center gap-1.5">
+                    <span className="text-xs bg-black/60 border border-white/10 text-gray-200 px-2.5 py-1 rounded-lg flex items-center gap-1.5 backdrop-blur-sm">
                       <i className="ti ti-bike text-xs" /> {alert.bike}
                     </span>
                     <span className="text-xs bg-red-950/90 border border-red-900 text-red-400 px-2.5 py-1 rounded-lg flex items-center gap-1.5">
@@ -216,15 +216,15 @@ function AlertDetail() {
 
             {/* ── RIGHT — TECH REVIEW ── */}
             <div className="flex flex-col gap-3">
-              <p className="text-xs text-gray-500 uppercase tracking-wider flex items-center gap-2">
+              <p className="text-xs text-gray-400 dark:text-gray-500 uppercase tracking-wider flex items-center gap-2">
                 <i className="ti ti-clipboard-check text-xs" /> Tech review
               </p>
 
-              <div className="bg-gray-950 border border-gray-800 rounded-xl p-4 flex flex-col gap-3 flex-1">
+              <div className="bg-gray-50 dark:bg-gray-950 border border-gray-200 dark:border-gray-800 rounded-xl p-4 flex flex-col gap-3 flex-1">
 
                 {/* Severity */}
                 <div>
-                  <p className="text-xs text-gray-500 mb-3">Classify severity</p>
+                  <p className="text-xs text-gray-400 dark:text-gray-500 mb-3">Classify severity</p>
                   <div className="flex gap-2 flex-wrap">
                     {(Object.keys(sevConfig) as Severity[]).map(sev => (
                       <button
@@ -233,12 +233,12 @@ function AlertDetail() {
                         className={`flex items-center gap-2 text-xs px-4 py-2.5 rounded-xl border transition-all font-medium ${
                           severity === sev
                             ? sevConfig[sev].badge
-                            : 'border-gray-700 text-gray-600 hover:border-gray-600 hover:text-gray-400 bg-transparent'
+                            : 'border-gray-200 dark:border-gray-700 text-gray-400 dark:text-gray-600 hover:border-gray-300 dark:hover:border-gray-600 hover:text-gray-600 dark:hover:text-gray-400 bg-transparent'
                         }`}
                       >
                         <span
                           className="w-1.5 h-1.5 rounded-full shrink-0"
-                          style={{ background: severity === sev ? sevConfig[sev].color : '#4b5563' }}
+                          style={{ background: severity === sev ? sevConfig[sev].color : '#9ca3af' }}
                         />
                         {sevConfig[sev].label}
                       </button>
@@ -246,26 +246,26 @@ function AlertDetail() {
                   </div>
                 </div>
 
-                <div className="border-t border-gray-800" />
+                <div className="border-t border-gray-200 dark:border-gray-800" />
 
                 {/* Notes */}
                 <div className="flex flex-col flex-1">
-                  <p className="text-xs text-gray-500 mb-3">Review notes</p>
+                  <p className="text-xs text-gray-400 dark:text-gray-500 mb-3">Review notes</p>
                   <textarea
                     value={notes}
                     onChange={e => setNotes(e.target.value)}
                     placeholder="Add notes for the city maintenance team..."
-                    className="flex-1 min-h-[120px] w-full bg-gray-900 border border-gray-800 rounded-xl px-3 py-2.5 text-xs text-gray-200 placeholder-gray-600 focus:outline-none focus:border-gray-600 resize-none transition-colors"
+                    className="flex-1 min-h-[120px] w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl px-3 py-2.5 text-xs text-gray-800 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-600 focus:outline-none focus:border-gray-400 dark:focus:border-gray-600 resize-none transition-colors"
                   />
                 </div>
 
-                <div className="border-t border-gray-800" />
+                <div className="border-t border-gray-200 dark:border-gray-800" />
 
                 {/* Buttons */}
                 <div className="flex flex-col gap-2">
                   <button
                     onClick={() => { setReviewed(true); handleSave() }}
-                    className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-green-950 border border-green-900 text-green-400 text-xs font-medium hover:bg-green-900 transition-colors"
+                    className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-green-600 dark:bg-green-950 border border-green-700 dark:border-green-900 text-white dark:text-green-400 text-xs font-medium hover:bg-green-700 dark:hover:bg-green-900 transition-colors"
                   >
                     <i className="ti ti-check text-sm" />
                     Mark as reviewed
@@ -274,12 +274,12 @@ function AlertDetail() {
                   <div className="flex gap-2">
                     <button
                       onClick={handleSave}
-                      className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-gray-800 border border-gray-700 text-gray-300 text-xs font-medium hover:bg-gray-700 transition-colors"
+                      className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 text-xs font-medium hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
                     >
                       {saved ? (
                         <>
-                          <i className="ti ti-check text-sm text-green-400" />
-                          <span className="text-green-400">Saved!</span>
+                          <i className="ti ti-check text-sm text-green-500" />
+                          <span className="text-green-600 dark:text-green-400">Saved!</span>
                         </>
                       ) : (
                         <>
@@ -289,7 +289,7 @@ function AlertDetail() {
                       )}
                     </button>
 
-                    <button className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-gray-800 border border-gray-700 text-gray-300 text-xs font-medium hover:bg-gray-700 transition-colors">
+                    <button className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 text-xs font-medium hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
                       <i className="ti ti-send text-sm" />
                       Send to city
                     </button>
