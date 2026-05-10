@@ -1,0 +1,3 @@
+[submodule "ArduinoPotholeTracker"]
+	path = ArduinoPotholeTracker
+	url = git@github.com:Shugarry/ArduinoPotholeTracker.git
