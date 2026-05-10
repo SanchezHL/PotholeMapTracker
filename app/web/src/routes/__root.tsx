@@ -18,8 +18,8 @@ export const Route = createRootRoute({
       { charSet: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
       ...seo({
-        title: 'PotholeTracker — Barcelona',
-        description: 'Real-time pothole detection and tracking across Barcelona.',
+        title: 'MyRoute — Barcelona',
+        description: 'Real-time road incident detection and tracking across Barcelona.',
       }),
     ],
     links: [
@@ -118,7 +118,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
                 <i className="ti ti-bike text-white text-sm" />
               </div>
               <span className="text-sm font-medium tracking-tight text-gray-900 dark:text-gray-100">
-                Pothole<span className="text-green-500">Tracker</span>
+                My<span className="text-green-500">Route</span>
               </span>
             </Link>
 

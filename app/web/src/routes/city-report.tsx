@@ -1,54 +1,30 @@
 import { createFileRoute } from '@tanstack/react-router'
 import * as React from 'react'
+import { fetchCityReport } from '~/lib/api'
 
 export const Route = createFileRoute('/city-report')({
+  loader: async () => fetchCityReport(),
   component: CityReport,
 })
 
-const zoneData = [
-  { name: 'Eixample',     total: 68, fixed: 21, critical: 3, medium: 2, low: 1 },
-  { name: 'Gràcia',       total: 44, fixed: 18, critical: 1, medium: 3, low: 2 },
-  { name: 'Poblenou',     total: 38, fixed: 12, critical: 2, medium: 2, low: 2 },
-  { name: 'Barceloneta',  total: 28, fixed: 14, critical: 1, medium: 1, low: 4 },
-  { name: 'Ciutat Vella', total: 22, fixed: 8,  critical: 1, medium: 2, low: 1 },
-  { name: 'Poble Sec',    total: 16, fixed: 5,  critical: 1, medium: 1, low: 2 },
-  { name: 'Others',       total: 31, fixed: 11, critical: 1, medium: 2, low: 3 },
-]
-
-const activityLog = [
-  { color: '#E24B4A', text: '3 critical potholes in Eixample flagged',   time: '2 min ago' },
-  { color: '#639922', text: 'Carrer de Balmes repaired & closed',         time: '1 hr ago'  },
-  { color: '#EF9F27', text: 'Weekly report sent to ayuntamiento',         time: '3 hrs ago' },
-  { color: '#374151', text: 'Sensor 02 route completed — Gràcia',         time: '5 hrs ago' },
-  { color: '#639922', text: 'Via Laietana patch confirmed by maintenance', time: '6 hrs ago' },
-  { color: '#E24B4A', text: 'New critical zone detected — Poblenou',      time: '8 hrs ago' },
-]
-
-const reportsSent = [
-  { label: 'Ayuntamiento BCN', value: 12, status: 'sent'    },
-  { label: 'Maintenance team', value: 8,  status: 'sent'    },
-  { label: 'Weekly digest',    value: 3,  status: 'sent'    },
-  { label: 'Pending review',   value: 5,  status: 'pending' },
-]
-
-const maxTotal = Math.max(...zoneData.map(z => z.total))
-
 function CityReport() {
+  const { zones: zoneData, activityLog, reportsSent } = Route.useLoaderData()
   const [activeZone, setActiveZone] = React.useState<string | null>(null)
   const [exporting,  setExporting]  = React.useState(false)
   const reportRef = React.useRef<HTMLDivElement>(null)
+  const maxTotal = Math.max(1, ...zoneData.map(z => z.total))
 
   const totalPotholes  = zoneData.reduce((s, z) => s + z.total, 0)
   const totalFixed     = zoneData.reduce((s, z) => s + z.fixed, 0)
-  const resolutionRate = Math.round((totalFixed / totalPotholes) * 100)
+  const resolutionRate = totalPotholes > 0 ? Math.round((totalFixed / totalPotholes) * 100) : 0
 
   const criticalTotal = zoneData.reduce((s, z) => s + z.critical * 10, 0)
   const mediumTotal   = zoneData.reduce((s, z) => s + z.medium  * 8,  0)
   const lowTotal      = zoneData.reduce((s, z) => s + z.low     * 5,  0)
   const sevTotal      = criticalTotal + mediumTotal + lowTotal
-  const critPct       = Math.round((criticalTotal / sevTotal) * 100)
-  const medPct        = Math.round((mediumTotal   / sevTotal) * 100)
-  const lowPct        = 100 - critPct - medPct
+  const critPct       = sevTotal > 0 ? Math.round((criticalTotal / sevTotal) * 100) : 0
+  const medPct        = sevTotal > 0 ? Math.round((mediumTotal   / sevTotal) * 100) : 0
+  const lowPct        = sevTotal > 0 ? 100 - critPct - medPct : 0
 
   const r        = 35
   const circ     = 2 * Math.PI * r
@@ -91,7 +67,7 @@ function CityReport() {
         heightLeft -= pageHeight
       }
 
-      pdf.save(`PotholeTracker_CityReport_Barcelona_${new Date().toISOString().slice(0, 10)}.pdf`)
+      pdf.save(`MyRoute_CityReport_Barcelona_${new Date().toISOString().slice(0, 10)}.pdf`)
     } catch (err) {
       console.error('PDF export failed:', err)
     } finally {
@@ -134,7 +110,7 @@ function CityReport() {
         {/* ── STAT CARDS ── */}
         <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
           <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-4">
-            <p className="text-xs text-gray-400 dark:text-gray-500 mb-1">Total potholes</p>
+            <p className="text-xs text-gray-400 dark:text-gray-500 mb-1">Total incidents</p>
             <p className="text-2xl font-medium text-gray-900 dark:text-gray-100">{totalPotholes}</p>
             <p className="text-xs mt-1 text-red-500 dark:text-red-400">+18 this week</p>
           </div>
@@ -157,7 +133,7 @@ function CityReport() {
           <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl overflow-hidden">
             <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-800 flex items-center gap-2">
               <i className="ti ti-map-pin text-gray-400 dark:text-gray-500 text-sm" />
-              <span className="text-sm font-medium text-gray-800 dark:text-gray-200">Potholes by zone</span>
+              <span className="text-sm font-medium text-gray-800 dark:text-gray-200">Incidents by zone</span>
             </div>
             <div className="p-4 flex flex-col gap-3">
               {zoneData.map(z => {

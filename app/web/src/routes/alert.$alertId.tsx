@@ -1,8 +1,15 @@
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import * as React from 'react'
-import { mockAlerts } from './alerts'
+import {
+  fetchAlertDetail,
+  formatIncidentCount,
+  getIncidentTypeTitle,
+} from '~/lib/api'
 
 export const Route = createFileRoute('/alert/$alertId')({
+  loader: async ({ params }) => {
+    return fetchAlertDetail({ data: Number(params.alertId) })
+  },
   component: AlertDetail,
 })
 
@@ -14,21 +21,11 @@ const sevConfig = {
 
 type Severity = keyof typeof sevConfig
 
-const fakePotholeImages = [
-  'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6d/Pothole_on_a_road_in_Bangalore.jpg/640px-Pothole_on_a_road_in_Bangalore.jpg',
-  'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Pothole_St_Helens.jpg/640px-Pothole_St_Helens.jpg',
-  'https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/Pothole_in_road.jpg/640px-Pothole_in_road.jpg',
-]
-
 function AlertDetail() {
   const { alertId } = Route.useParams()
+  const { alert, prevAlertId, nextAlertId, position, total, imageUrl } = Route.useLoaderData()
   const navigate    = useNavigate()
   const id          = Number(alertId)
-
-  const alertIndex = mockAlerts.findIndex(a => a.id === id)
-  const alert      = mockAlerts[alertIndex]
-  const prevAlert  = alertIndex > 0 ? mockAlerts[alertIndex - 1] : null
-  const nextAlert  = alertIndex < mockAlerts.length - 1 ? mockAlerts[alertIndex + 1] : null
 
   const [severity, setSeverity] = React.useState<Severity>(
     (alert?.severity as Severity) ?? 'low'
@@ -44,9 +41,7 @@ function AlertDetail() {
     setNotes('')
     setSaved(false)
     setImgError(false)
-  }, [id])
-
-  const fakeImage = fakePotholeImages[(id - 1) % fakePotholeImages.length]
+  }, [alert?.id, alert?.reviewed, alert?.severity])
 
   function handleSave() {
     setSaved(true)
@@ -90,18 +85,18 @@ function AlertDetail() {
 
         <div className="flex items-center gap-2 ml-auto">
           <button
-            onClick={() => prevAlert && goTo(prevAlert.id)}
-            disabled={!prevAlert}
+            onClick={() => prevAlertId && goTo(prevAlertId)}
+            disabled={!prevAlertId}
             className="p-2 rounded-xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 hover:border-gray-300 dark:hover:border-gray-700 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
           >
             <i className="ti ti-chevron-left text-sm" />
           </button>
           <span className="text-xs text-gray-400 dark:text-gray-600 shrink-0 tabular-nums">
-            {alertIndex + 1} / {mockAlerts.length}
+            {position} / {total}
           </span>
           <button
-            onClick={() => nextAlert && goTo(nextAlert.id)}
-            disabled={!nextAlert}
+            onClick={() => nextAlertId && goTo(nextAlertId)}
+            disabled={!nextAlertId}
             className="p-2 rounded-xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 hover:border-gray-300 dark:hover:border-gray-700 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
           >
             <i className="ti ti-chevron-right text-sm" />
@@ -145,7 +140,7 @@ function AlertDetail() {
             {[
               { icon: 'ti-map-pin',      label: 'Location', value: alert.zone                },
               { icon: 'ti-clock',        label: 'Detected', value: alert.time                },
-              { icon: 'ti-alert-circle', label: 'Potholes', value: `${alert.potholes} found` },
+              { icon: 'ti-alert-circle', label: getIncidentTypeTitle(alert.incidentType), value: formatIncidentCount(alert.incidentType, alert.incidentCount) },
             ].map((item, i) => (
               <div key={i} className="bg-gray-50 dark:bg-gray-950 border border-gray-200 dark:border-gray-800 rounded-xl p-3">
                 <div className="flex items-center gap-1.5 mb-2">
@@ -169,8 +164,8 @@ function AlertDetail() {
               <div className="relative bg-gray-100 dark:bg-gray-950 border border-gray-200 dark:border-gray-800 rounded-xl overflow-hidden flex-1 min-h-[260px] flex items-center justify-center">
                 {!imgError ? (
                   <img
-                    src={fakeImage}
-                    alt={`Pothole at ${alert.street}`}
+                    src={imageUrl ?? undefined}
+                    alt={`Incident at ${alert.street}`}
                     className="w-full h-full object-cover absolute inset-0"
                     onError={() => setImgError(true)}
                   />
@@ -207,7 +202,7 @@ function AlertDetail() {
                     </span>
                     <span className="text-xs bg-red-950/90 border border-red-900 text-red-400 px-2.5 py-1 rounded-lg flex items-center gap-1.5">
                       <i className="ti ti-alert-circle text-xs" />
-                      {alert.potholes} pothole{alert.potholes > 1 ? 's' : ''} detected
+                      {formatIncidentCount(alert.incidentType, alert.incidentCount)} detected
                     </span>
                   </div>
                 )}

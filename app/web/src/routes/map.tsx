@@ -1,24 +1,13 @@
 import { createFileRoute } from '@tanstack/react-router'
 import * as React from 'react'
+import { fetchMapPotholes, type PotholeRecord } from '~/lib/api'
 
 export const Route = createFileRoute('/map')({
+  loader: async () => ({
+    potholes: await fetchMapPotholes(),
+  }),
   component: MapPage,
 })
-
-const mockPotholes = [
-  { id: 1,  street: 'Carrer de Mallorca',        severity: 'high', bike: 'Sensor 01', time: '2 min ago',  reviewed: false, lng: 2.1534, lat: 41.3951 },
-  { id: 2,  street: 'Carrer de Provença',         severity: 'high', bike: 'Sensor 01', time: '8 min ago',  reviewed: false, lng: 2.1634, lat: 41.3921 },
-  { id: 3,  street: 'Av. Diagonal',               severity: 'med',  bike: 'Sensor 02', time: '15 min ago', reviewed: true,  lng: 2.1734, lat: 41.3951 },
-  { id: 4,  street: 'Via Laietana',               severity: 'med',  bike: 'Sensor 02', time: '22 min ago', reviewed: false, lng: 2.1834, lat: 41.3831 },
-  { id: 5,  street: 'Passeig de Gràcia',          severity: 'low',  bike: 'Sensor 03', time: '41 min ago', reviewed: true,  lng: 2.1634, lat: 41.3911 },
-  { id: 6,  street: 'Carrer de Balmes',           severity: 'low',  bike: 'Sensor 03', time: '1 hr ago',   reviewed: false, lng: 2.1534, lat: 41.3871 },
-  { id: 7,  street: 'Rambla del Poblenou',        severity: 'high', bike: 'Sensor 01', time: '1 hr ago',   reviewed: false, lng: 2.1934, lat: 41.3981 },
-  { id: 8,  street: 'Carrer de Muntaner',         severity: 'med',  bike: 'Sensor 02', time: '2 hrs ago',  reviewed: true,  lng: 2.1484, lat: 41.3891 },
-  { id: 9,  street: 'Gran Via de les Corts',      severity: 'high', bike: 'Sensor 01', time: '2 hrs ago',  reviewed: false, lng: 2.1684, lat: 41.3801 },
-  { id: 10, street: 'Av. Paral·lel',              severity: 'low',  bike: 'Sensor 03', time: '3 hrs ago',  reviewed: true,  lng: 2.1584, lat: 41.3761 },
-  { id: 11, street: 'Carrer de la Marina',        severity: 'med',  bike: 'Sensor 02', time: '3 hrs ago',  reviewed: false, lng: 2.2034, lat: 41.3921 },
-  { id: 12, street: 'Carrer de Consell de Cent',  severity: 'high', bike: 'Sensor 01', time: '4 hrs ago',  reviewed: false, lng: 2.1734, lat: 41.3881 },
-]
 
 const sevColors = { high: '#E24B4A', med: '#EF9F27', low: '#639922' } as const
 type Severity = keyof typeof sevColors
@@ -32,20 +21,21 @@ const sevConfig = {
 declare global { interface Window { L: any } }
 
 function MapPage() {
+  const { potholes } = Route.useLoaderData()
   const mapContainer = React.useRef<HTMLDivElement>(null)
   const mapRef       = React.useRef<any>(null)
   const markersRef   = React.useRef<any[]>([])
   const tileRef      = React.useRef<any>(null)
 
   const [filters,     setFilters]     = React.useState({ high: true, med: true, low: true })
-  const [selectedPin, setSelectedPin] = React.useState<typeof mockPotholes[0] | null>(null)
+  const [selectedPin, setSelectedPin] = React.useState<PotholeRecord | null>(null)
   const [ready,       setReady]       = React.useState(false)
   const [isDark,      setIsDark]      = React.useState(
     () => document.documentElement.classList.contains('dark')
   )
 
-  const criticalCount   = mockPotholes.filter(p => p.severity === 'high').length
-  const unreviewedCount = mockPotholes.filter(p => !p.reviewed).length
+  const criticalCount   = potholes.filter(p => p.severity === 'high').length
+  const unreviewedCount = potholes.filter(p => !p.reviewed).length
 
   // Load Leaflet from CDN
   React.useEffect(() => {
@@ -114,16 +104,16 @@ function MapPage() {
     setTimeout(() => map.invalidateSize(), 600)
 
     return () => { map.remove(); mapRef.current = null; tileRef.current = null }
-  }, [ready])
+  }, [ready, potholes])
 
   React.useEffect(() => {
     if (mapRef.current && window.L) addMarkers(mapRef.current, window.L)
-  }, [filters])
+  }, [filters, potholes])
 
   function addMarkers(map: any, L: any) {
     markersRef.current.forEach(m => map.removeLayer(m))
     markersRef.current = []
-    mockPotholes
+    potholes
       .filter(p => filters[p.severity as Severity])
       .forEach(p => {
         const circle = L.circleMarker([p.lat, p.lng], {
@@ -245,7 +235,7 @@ function MapPage() {
             {/* Stats */}
             <div className="bg-white/90 dark:bg-gray-900/90 border border-gray-200 dark:border-gray-800 rounded-xl px-3 py-2 flex items-center gap-3 self-start shadow-sm">
               <span className="text-xs text-gray-500 dark:text-gray-400">
-                <span className="text-gray-900 dark:text-gray-200 font-medium">{mockPotholes.length}</span> potholes
+                <span className="text-gray-900 dark:text-gray-200 font-medium">{potholes.length}</span> incidents
               </span>
               <span className="text-xs text-red-500 dark:text-red-400">
                 <span className="font-medium">{criticalCount}</span> critical

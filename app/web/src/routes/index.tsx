@@ -1,20 +1,17 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
 import * as React from 'react'
+import {
+  createHomePothole,
+  fetchHomePotholes,
+  type PotholeRecord,
+} from '~/lib/api'
 
 export const Route = createFileRoute('/')({
+  loader: async () => ({
+    potholes: await fetchHomePotholes(),
+  }),
   component: Home,
 })
-
-const mockPotholes = [
-  { id: 1, street: 'Carrer de Mallorca',  severity: 'high', bike: 'Sensor 01', time: '2 min ago',  reviewed: false, lng: 2.1534, lat: 41.3951 },
-  { id: 2, street: 'Carrer de Provença',  severity: 'high', bike: 'Sensor 01', time: '8 min ago',  reviewed: false, lng: 2.1634, lat: 41.3921 },
-  { id: 3, street: 'Av. Diagonal',        severity: 'med',  bike: 'Sensor 02', time: '15 min ago', reviewed: true,  lng: 2.1734, lat: 41.3951 },
-  { id: 4, street: 'Via Laietana',        severity: 'med',  bike: 'Sensor 02', time: '22 min ago', reviewed: false, lng: 2.1834, lat: 41.3831 },
-  { id: 5, street: 'Passeig de Gràcia',   severity: 'low',  bike: 'Sensor 03', time: '41 min ago', reviewed: true,  lng: 2.1634, lat: 41.3911 },
-  { id: 6, street: 'Carrer de Balmes',    severity: 'low',  bike: 'Sensor 03', time: '1 hr ago',   reviewed: false, lng: 2.1534, lat: 41.3871 },
-  { id: 7, street: 'Rambla del Poblenou', severity: 'high', bike: 'Sensor 01', time: '1 hr ago',   reviewed: false, lng: 2.1934, lat: 41.3981 },
-  { id: 8, street: 'Carrer de Muntaner',  severity: 'med',  bike: 'Sensor 02', time: '2 hrs ago',  reviewed: true,  lng: 2.1484, lat: 41.3891 },
-]
 
 const sevConfig = {
   high: { label: 'Critical', color: '#E24B4A', badge: 'bg-red-950 text-red-400 border border-red-900',       dot: 'bg-red-500'   },
@@ -26,20 +23,14 @@ type Severity = keyof typeof sevConfig
 
 declare global { interface Window { L: any } }
 
-const extraStreets = [
-  'Carrer de Consell de Cent',
-  'Av. Paral·lel',
-  'Carrer de la Marina',
-  'Gran Via de les Corts',
-]
-
 function Home() {
+  const { potholes: initialPotholes } = Route.useLoaderData()
   const mapContainer = React.useRef<HTMLDivElement>(null)
   const mapRef       = React.useRef<any>(null)
   const markersRef   = React.useRef<any[]>([])
   const tileRef      = React.useRef<any>(null)
 
-  const [potholes,  setPotholes]  = React.useState(mockPotholes)
+  const [potholes,  setPotholes]  = React.useState<PotholeRecord[]>(initialPotholes)
   const [filters,   setFilters]   = React.useState({ high: true, med: true, low: true })
   const [simCount,  setSimCount]  = React.useState(0)
   const [mapReady,  setMapReady]  = React.useState(false)
@@ -140,17 +131,9 @@ function Home() {
       })
   }
 
-  function simulate() {
-    const street   = extraStreets[simCount % extraStreets.length]
-    const sevs: Severity[] = ['high', 'med', 'low']
-    const severity = sevs[Math.floor(Math.random() * 3)]
-    setPotholes(prev => [{
-      id: Date.now(), street, severity,
-      bike: `Sensor 0${Math.ceil(Math.random() * 3)}`,
-      time: 'just now', reviewed: false,
-      lng: 2.1534 + (Math.random() * 0.06 - 0.03),
-      lat: 41.3851 + (Math.random() * 0.04 - 0.02),
-    }, ...prev])
+  async function simulate() {
+    const pothole = await createHomePothole()
+    setPotholes(prev => [pothole, ...prev])
     setSimCount(c => c + 1)
   }
 
@@ -179,7 +162,7 @@ function Home() {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
 
         <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-4">
-          <p className="text-xs text-gray-500 mb-1">Potholes detected</p>
+          <p className="text-xs text-gray-500 mb-1">Incidents detected</p>
           <p className="text-2xl font-medium text-gray-900 dark:text-gray-100">{potholes.length}</p>
           <p className="text-xs mt-1 text-green-600 dark:text-green-500">+{simCount} simulated</p>
         </div>
@@ -195,7 +178,7 @@ function Home() {
             <div className="absolute inset-0 border border-amber-300 dark:border-amber-900/60 rounded-xl pointer-events-none" />
           )}
           <div className="flex items-start justify-between mb-1">
-            <p className="text-xs text-gray-500">Potholes to review</p>
+            <p className="text-xs text-gray-500">Incidents to review</p>
             {unreviewedCount > 0 && (
               <span className="text-xs bg-amber-100 dark:bg-amber-950 text-amber-700 dark:text-amber-400 border border-amber-300 dark:border-amber-900 px-1.5 py-0.5 rounded-full leading-none">
                 pending
@@ -336,7 +319,7 @@ function Home() {
               onClick={simulate}
               className="w-full py-2 rounded-xl bg-green-950 border border-green-900 text-green-400 text-xs font-medium hover:bg-green-900 transition-colors flex items-center justify-center gap-2"
             >
-              <i className="ti ti-plus text-sm" /> Detect new pothole
+              <i className="ti ti-plus text-sm" /> Detect new incident
             </button>
           </div>
         </div>

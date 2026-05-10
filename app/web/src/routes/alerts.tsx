@@ -1,24 +1,13 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
 import * as React from 'react'
+import { fetchAlerts, formatIncidentCount } from '~/lib/api'
 
 export const Route = createFileRoute('/alerts')({
+  loader: async () => ({
+    alerts: await fetchAlerts(),
+  }),
   component: AlertsPage,
 })
-
-export const mockAlerts = [
-  { id: 1,  street: 'Carrer de Mallorca',        severity: 'high', bike: 'Bike 01', time: '2 min ago',  reviewed: false, potholes: 3, image: null, zone: 'Eixample'     },
-  { id: 2,  street: 'Carrer de Provença',         severity: 'high', bike: 'Bike 01', time: '8 min ago',  reviewed: false, potholes: 2, image: null, zone: 'Eixample'     },
-  { id: 3,  street: 'Av. Diagonal',               severity: 'med',  bike: 'Bike 02', time: '15 min ago', reviewed: true,  potholes: 1, image: null, zone: 'Les Corts'    },
-  { id: 4,  street: 'Via Laietana',               severity: 'med',  bike: 'Bike 02', time: '22 min ago', reviewed: false, potholes: 2, image: null, zone: 'Ciutat Vella' },
-  { id: 5,  street: 'Passeig de Gràcia',          severity: 'low',  bike: 'Bike 03', time: '41 min ago', reviewed: true,  potholes: 1, image: null, zone: 'Eixample'     },
-  { id: 6,  street: 'Carrer de Balmes',           severity: 'low',  bike: 'Bike 03', time: '1 hr ago',   reviewed: false, potholes: 1, image: null, zone: 'Sarrià'       },
-  { id: 7,  street: 'Rambla del Poblenou',        severity: 'high', bike: 'Bike 01', time: '1 hr ago',   reviewed: false, potholes: 4, image: null, zone: 'Poblenou'     },
-  { id: 8,  street: 'Carrer de Muntaner',         severity: 'med',  bike: 'Bike 02', time: '2 hrs ago',  reviewed: true,  potholes: 2, image: null, zone: 'Eixample'     },
-  { id: 9,  street: 'Gran Via de les Corts',      severity: 'high', bike: 'Bike 01', time: '2 hrs ago',  reviewed: false, potholes: 3, image: null, zone: 'Eixample'     },
-  { id: 10, street: 'Av. Paral·lel',              severity: 'low',  bike: 'Bike 03', time: '3 hrs ago',  reviewed: true,  potholes: 1, image: null, zone: 'Poble Sec'    },
-  { id: 11, street: 'Carrer de la Marina',        severity: 'med',  bike: 'Bike 02', time: '3 hrs ago',  reviewed: false, potholes: 2, image: null, zone: 'Poblenou'     },
-  { id: 12, street: 'Carrer de Consell de Cent',  severity: 'high', bike: 'Bike 01', time: '4 hrs ago',  reviewed: false, potholes: 3, image: null, zone: 'Eixample'     },
-]
 
 const sevConfig = {
   high: { label: 'Critical', color: '#E24B4A', badge: 'bg-red-950 text-red-400 border border-red-900',       dot: 'bg-red-500',   border: 'border-l-red-500'   },
@@ -30,10 +19,11 @@ type Severity = keyof typeof sevConfig
 type Filter = 'all' | 'unreviewed' | Severity
 
 function AlertsPage() {
+  const { alerts } = Route.useLoaderData()
   const [filter, setFilter] = React.useState<Filter>('all')
   const [search, setSearch] = React.useState('')
 
-  const filtered = mockAlerts.filter(a => {
+  const filtered = alerts.filter(a => {
     const matchesSev    = filter === 'all' || filter === 'unreviewed' || a.severity === filter
     const matchesStatus = filter !== 'unreviewed' || !a.reviewed
     const matchesSearch = a.street.toLowerCase().includes(search.toLowerCase()) ||
@@ -41,8 +31,8 @@ function AlertsPage() {
     return matchesSev && matchesStatus && matchesSearch
   })
 
-  const critCount       = mockAlerts.filter(a => a.severity === 'high').length
-  const unreviewedCount = mockAlerts.filter(a => !a.reviewed).length
+  const critCount       = alerts.filter(a => a.severity === 'high').length
+  const unreviewedCount = alerts.filter(a => !a.reviewed).length
 
   const filterBtns: { key: Filter; label: string }[] = [
     { key: 'all',        label: 'All'      },
@@ -60,7 +50,7 @@ function AlertsPage() {
         <div>
           <h1 className="text-base font-medium text-gray-900 dark:text-gray-100">Live alerts</h1>
           <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">
-            {mockAlerts.length} total · {critCount} critical · {unreviewedCount} pending review
+            {alerts.length} total · {critCount} critical · {unreviewedCount} pending review
           </p>
         </div>
 
@@ -161,7 +151,7 @@ function AlertsPage() {
                         </span>
                         <span className="flex items-center gap-1">
                           <i className="ti ti-alert-circle text-xs" />
-                          {alert.potholes} pothole{alert.potholes > 1 ? 's' : ''} detected
+                          {formatIncidentCount(alert.incidentType, alert.incidentCount)} detected
                         </span>
                       </div>
                     </div>
