@@ -118,7 +118,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
                 <i className="ti ti-bike text-white text-sm" />
               </div>
               <span className="text-sm font-medium tracking-tight text-gray-900 dark:text-gray-100">
-                Pothole<span className="text-green-500">Tracker</span>
+                My<span className="text-green-500">Route</span>
               </span>
             </Link>
 
